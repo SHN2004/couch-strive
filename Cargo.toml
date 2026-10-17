@@ -1,5 +1,5 @@
 [package]
-name = "kbsplit"
+name = "couch-strive"
 version = "0.1.0"
 edition = "2024"
 

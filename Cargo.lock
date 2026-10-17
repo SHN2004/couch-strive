@@ -33,6 +33,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
 
 [[package]]
+name = "couch-strive"
+version = "0.1.0"
+dependencies = [
+ "evdev",
+ "libc",
+]
+
+[[package]]
 name = "evdev"
 version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -49,14 +57,6 @@ name = "funty"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6d5a32815ae3f33302d95fdcb2ce17862f8c65363dcfd29360480ba1001fc9c"
-
-[[package]]
-name = "kbsplit"
-version = "0.1.0"
-dependencies = [
- "evdev",
- "libc",
-]
 
 [[package]]
 name = "libc"

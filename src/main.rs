@@ -1,6 +1,6 @@
 //! Second keyboard -> Guilty Gear Strive's built-in Player 2 keyboard keys, for local versus.
 //! With "Keyboard Control Type" set to two players, GGST gives Controller 2 its own keys (arrows,
-//! Insert, Delete, ...). kbsplit captures only Player 2's keyboard and replays it as those keys on a
+//! Insert, Delete, ...). couch-strive captures only Player 2's keyboard and replays it as those keys on a
 //! virtual keyboard, so both players use the same layout on their own keyboard. Player 1's keyboard
 //! is left alone. Linux take on KeyboardSplitterXbox: an evdev grab replaces the Interception driver.
 
@@ -52,7 +52,7 @@ struct Keys {
 impl Keys {
     fn new() -> io::Result<Self> {
         let keys: AttributeSet<K> = OUTPUTS.into_iter().collect();
-        let dev = VirtualDevice::builder()?.name("kbsplit Player 2 keys").with_keys(&keys)?.build()?;
+        let dev = VirtualDevice::builder()?.name("couch-strive Player 2 keys").with_keys(&keys)?.build()?;
         Ok(Keys { dev, down: HashMap::new() })
     }
 
