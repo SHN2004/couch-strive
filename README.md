@@ -14,22 +14,33 @@ an evdev grab replaces its Interception driver, so no drivers are needed.
 
 ```bash
 cargo build --release
-sudo ./target/release/couch-strive
+./target/release/couch-strive
 ```
 
-Player 2 then presses Space on their keyboard. couch-strive needs root (or the `input` group) to read
-keyboards, and write access to `/dev/uinput`.
+Run it as yourself, not with sudo. In the window:
 
-Stop other key remappers that grab keyboards first, for example `sudo systemctl stop keyd`.
-couch-strive exits with a message if one is in the way.
+1. Click **Grant access**. Your system asks for your password, because reading keyboards needs
+   admin rights.
+2. If keyd holds the keyboards, click **Pause keyd while playing**. It starts again when you close
+   couch-strive.
+3. Pick **Player 2's keyboard**. The key tester shows what each key sends.
+4. Click **Start**.
+
+**F12** on Player 2's keyboard switches it between the game and the desktop. Closing the window
+gives the keyboard back.
 
 ## One-time GGST setup
 
 1. In Settings, set **Keyboard Control Type** to the two-player option.
-2. In Button Settings, press **0** to open Controller 2, select **Dash**, and press Shift on
-   Player 2's keyboard while couch-strive is running (it sends Page Down).
+2. In Button Settings, press **0** to open Controller 2, select **Dash**, and press Player 2's Dash
+   key while couch-strive is running (it sends Page Down).
 
 ## Player 2 layout
+
+Click **+** next to an action and press a key on Player 2's keyboard to add it, or click a key to
+remove it. The layout and the chosen keyboard are saved in `~/.config/couch-strive/config.json`.
+
+The default layout:
 
 | Player 2 presses | couch-strive sends | GGST Controller 2 |
 |---|---|---|
@@ -43,8 +54,12 @@ couch-strive exits with a message if one is in the way.
 
 Player 1 plays with GGST's own keyboard controls and should avoid the keys in the middle column.
 
-**F12** on Player 2's keyboard switches it between the game and the desktop. **Ctrl+C** in the
-terminal quits.
+## How it works
+
+The window runs as you and starts `couch-strive helper` as root through `pkexec`. The helper only
+lists keyboards, reports key presses, captures Player 2's keyboard and types on the virtual
+keyboard. They talk in JSON lines over the helper's stdin and stdout. When the window closes, the
+helper releases the keyboard, starts keyd again if it paused it, and exits.
 
 ## Limits
 
