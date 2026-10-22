@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=couch-strive
+GenericName=Two-keyboard splitter
+Comment=Play Guilty Gear -Strive- local versus with two keyboards
+Exec=couch-strive
+Icon=couch-strive
+Terminal=false
+Categories=Game;
+Keywords=Guilty Gear;Strive;keyboard;local;versus;
+StartupWMClass=couch-strive

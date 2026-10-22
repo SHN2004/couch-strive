@@ -1,0 +1,36 @@
+name: Release
+
+# Pushing a version tag (e.g. v0.2.0) builds couch-strive and publishes a GitHub release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # The oldest supported Ubuntu, so the binary also runs on distros with an older glibc.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Check the tag matches Cargo.toml
+        run: test "$GITHUB_REF_NAME" = "v$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')"
+
+      - run: cargo test --locked
+      - run: cargo build --release --locked
+
+      - name: Package
+        run: |
+          name="couch-strive-$GITHUB_REF_NAME-linux-x86_64"
+          mkdir -p "$name/assets"
+          cp target/release/couch-strive install.sh README.md "$name/"
+          cp assets/couch-strive.desktop assets/couch-strive.svg "$name/assets/"
+          tar -czf "$name.tar.gz" "$name"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" couch-strive-*.tar.gz --title "couch-strive $GITHUB_REF_NAME" --generate-notes
