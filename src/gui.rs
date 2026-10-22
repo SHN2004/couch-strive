@@ -364,10 +364,13 @@ impl App {
 
     fn controls(&mut self, ui: &mut egui::Ui) {
         ui.add_space(8.0);
+        let ready = self.watching.is_some() && self.checks.as_ref().is_some_and(|c| c.virtual_keyboard_error.is_none());
         let (badge, color, text) = match self.mode {
             Mode::Game => ("PLAYING", GOOD, "Player 2's keyboard drives GGST's Controller 2. F12 on it switches to the desktop."),
             Mode::Desktop => ("DESKTOP", WARN, "Player 2's keyboard types normally. F12 on it goes back to the game."),
-            Mode::Stopped => ("STOPPED", Color32::GRAY, "Player 2's keyboard types normally."),
+            // Picking a keyboard only watches it; nothing reaches the game until Start.
+            Mode::Stopped if ready => ("NOT PLAYING", WARN, "Click Start to send Player 2's keys to the game."),
+            Mode::Stopped => ("NOT PLAYING", Color32::GRAY, "Grant access and pick Player 2's keyboard, then click Start."),
         };
         ui.horizontal_wrapped(|ui| {
             ui.label(RichText::new(badge).strong().color(color));
@@ -375,10 +378,10 @@ impl App {
         });
         ui.add_space(4.0);
         ui.horizontal(|ui| {
-            let big = |text: &str| egui::Button::new(RichText::new(text).size(18.0)).min_size(egui::vec2(120.0, 32.0));
+            let big = |text: &str| egui::Button::new(RichText::new(text).size(18.0).strong()).min_size(egui::vec2(140.0, 36.0));
             if self.mode == Mode::Stopped {
-                let ready = self.watching.is_some() && self.checks.as_ref().is_some_and(|c| c.virtual_keyboard_error.is_none());
-                if ui.add_enabled(ready, big("Start")).on_disabled_hover_text("Finish the setup and pick Player 2's keyboard").clicked() {
+                let start = big("Start").fill(Color32::from_rgb(40, 140, 70));
+                if ui.add_enabled(ready, start).on_disabled_hover_text("Finish the setup and pick Player 2's keyboard").clicked() {
                     self.send(Command::Play { pairs: self.layout.pairs() });
                 }
             } else if ui.add(big("Stop")).clicked() {
