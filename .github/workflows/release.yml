@@ -13,7 +13,7 @@ jobs:
     # The oldest supported Ubuntu, so the binary also runs on distros with an older glibc.
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
 
       - name: Check the tag matches Cargo.toml
