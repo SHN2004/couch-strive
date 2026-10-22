@@ -2,7 +2,7 @@
 //! stdout. When stdin closes (the window quit or crashed) it releases the keyboard, starts keyd
 //! again if it paused it, and exits.
 
-use crate::layout::{ACTIONS, TOGGLE};
+use crate::layout::{self, TOGGLE};
 use crate::protocol::{self, Command, Event, Keyboard, Mode};
 use evdev::{uinput::VirtualDevice, AttributeSet, Device, EventSummary, EventType, InputEvent, KeyCode as K};
 use std::{
@@ -32,7 +32,7 @@ struct Keys {
 
 impl Keys {
     fn new() -> io::Result<Self> {
-        let keys: AttributeSet<K> = ACTIONS.iter().map(|a| a.sends).collect();
+        let keys: AttributeSet<K> = layout::outputs().collect();
         let dev = VirtualDevice::builder()?.name("couch-strive Player 2 keys").with_keys(&keys)?.build()?;
         Ok(Keys { dev, down: HashMap::new() })
     }
@@ -187,7 +187,13 @@ impl Helper {
     }
 
     fn list(&mut self) -> io::Result<()> {
-        let list = keyboards().into_iter().map(|(kb, _)| kb).collect();
+        let mut list: Vec<_> = keyboards().into_iter().map(|(kb, _)| kb).collect();
+        // While playing, our own grab makes Player 2's keyboard look taken.
+        if let Some((id, _)) = &self.watched {
+            for kb in list.iter_mut().filter(|kb| &kb.id == id) {
+                kb.blocked = None;
+            }
+        }
         self.send(&Event::Keyboards { list })
     }
 
@@ -229,8 +235,6 @@ impl Helper {
 
     fn handle(&mut self, cmd: Command) -> io::Result<()> {
         match cmd {
-            // our own grab would make Player 2's keyboard look blocked
-            Command::List if self.mode == Mode::Game => self.error("Stop before refreshing the keyboard list"),
             Command::List => self.list(),
             Command::Watch { keyboard } => {
                 self.stop()?;
@@ -262,7 +266,8 @@ impl Helper {
                 if self.keys.is_none() {
                     return self.error("The virtual keyboard is unavailable");
                 }
-                if self.mode == Mode::Stopped {
+                // also resumes after F12 handed the keyboard to the desktop
+                if self.mode != Mode::Game {
                     self.grab(true)?;
                     self.set_mode(Mode::Game)?;
                 }

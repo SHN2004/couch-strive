@@ -33,14 +33,13 @@ it, delete `~/.local/bin/couch-strive`, `~/.local/share/applications/couch-striv
 
 ## Use
 
-Open **couch-strive** from your app menu. Run it as yourself, not with sudo. In the window:
+Open **couch-strive** from your app menu (as yourself, not with sudo) and enter your password when
+asked: reading keyboards needs admin rights. Pick **Player 2's keyboard** and play starts right away;
+next time it reconnects to that keyboard on its own.
 
-1. Click **Grant access**. Your system asks for your password, because reading keyboards needs
-   admin rights.
-2. If keyd holds the keyboards, click **Pause keyd while playing**. It starts again when you close
-   couch-strive.
-3. Pick **Player 2's keyboard**. The key tester shows what each key sends.
-4. Click the green **Start** button. The status turns **PLAYING**; until then nothing reaches the game.
+The card at the top always says what is happening, with the one button you might need: **Pause** or
+**Resume**, **Pause keyd** if keyd is holding the keyboards (it starts again when you close
+couch-strive), or **Try again** if the password prompt was closed.
 
 **F12** on Player 2's keyboard switches it between the game and the desktop. Closing the window
 gives the keyboard back.
@@ -53,8 +52,10 @@ gives the keyboard back.
 
 ## Player 2 layout
 
-Click **+** next to an action and press a key on Player 2's keyboard to add it, or click a key to
-remove it. The layout and the chosen keyboard are saved in `~/.config/couch-strive/config.json`.
+In **Controls**, pressing a key on Player 2's keyboard lights up its row. Click **+** and press a key
+to add it to an action, or click a key to remove it. The dropdown on the right picks the key the game
+gets; if you change one, set the same key for Controller 2 in GGST's Button Settings. The layout and
+the chosen keyboard are saved in `~/.config/couch-strive/config.json`.
 
 The default layout:
 
